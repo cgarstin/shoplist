@@ -14,6 +14,7 @@ ShoppingList.RemoveItem = function() {
 		var array = ShoppingList.GetList().split(',');
 		var listItemIndex = array.indexOf($(this).text());
 		if( listItemIndex !== -1) {
+			console.warn(listItemIndex, array.splice(listItemIndex, 1));
 			ShoppingList.SetList(array.splice(listItemIndex, 1))
 		}
 	});
@@ -25,8 +26,9 @@ ShoppingList.UpdateList = function(list) {
 
 ShoppingList.SubmitValue = function() {
 	$('.shopping-list').on('submit', function(){
-		var currentList = JSON.parse(ShoppingList.GetList()),
-				newItem = $('.new-item').val();
+
+		var currentList = ShoppingList.GetList();//JSON.parse(ShoppingList.GetList());
+		var	newItem = $('.new-item').val();
 
 		ShoppingList.SetList(currentList, newItem);
 		return false;
@@ -39,9 +41,15 @@ ShoppingList.GetList = function() {
 }
 
 ShoppingList.SetList = function(shoppingList, newItem) {
-	if(shoppingList) {
-		var newList = JSON.stringify(shoppingList + ',' + newItem);
-		localStorage.setItem('Shopping List', newList)
+	var newlist = newItem;
+	console.log(newItem)
+	if(shoppingList &&  typeof shoppingList !== 'undefined' && typeof shoppingList !== 'null') {
+		newList = shoppingList + ',' + newItem;
+		localStorage.setItem('Shopping List', newList);
+		ShoppingList.BuildList(newList);
+	} else if (newItem) {
+		newList = JSON.stringify(newItem);
+		localStorage.setItem('Shopping List', newList);
 		ShoppingList.BuildList(newList);
 	}
 }
